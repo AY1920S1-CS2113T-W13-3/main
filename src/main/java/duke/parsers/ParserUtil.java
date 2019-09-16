@@ -3,9 +3,7 @@ package duke.parsers;
 import duke.commons.DukeDateTimeParseException;
 import duke.commons.DukeException;
 import duke.commons.MessageUtil;
-import duke.tasks.Deadline;
-import duke.tasks.Event;
-import duke.tasks.Todo;
+import duke.tasks.*;
 
 /**
  * Parser for utility functions.
@@ -68,6 +66,28 @@ public class ParserUtil {
         }
     }
 
+    protected static Fixed createFixed(String userInput) throws  DukeException {
+        String[] fixedDetails = userInput.substring("fixed".length()).strip().split("needs");
+        if (fixedDetails.length != 2 || fixedDetails[1] == null) {
+            throw new DukeException(MessageUtil.INVALID_FORMAT);
+        }
+        if (fixedDetails[0].strip().isEmpty()) {
+            throw new DukeException(MessageUtil.EMPTY_DESCRIPTION);
+        }
+        String[] timeDetails = fixedDetails[1].strip().split("hours");
+        int hour = 0;
+        int min = 0;
+        if (timeDetails.length == 2) {
+            hour = Integer.parseInt( timeDetails[0].strip() );
+            min = Integer.parseInt( timeDetails[1].replaceAll("mins","").strip() );
+        } else if (timeDetails[0].contains("mins")){
+            min = Integer.parseInt( timeDetails[0].replaceAll("mins" , "").strip() );
+        } else {
+            hour = Integer.parseInt( timeDetails[0].strip() );
+        }
+        return new Fixed(fixedDetails[0] , hour , min );
+    }
+
     /**
      * Parses the userInput and return an index extracted from it.
      *
@@ -82,4 +102,6 @@ public class ParserUtil {
             throw new DukeException(MessageUtil.INVALID_FORMAT);
         }
     }
+
+
 }
