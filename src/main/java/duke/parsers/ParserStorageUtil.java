@@ -7,6 +7,7 @@ import duke.tasks.Deadline;
 import duke.tasks.Event;
 import duke.tasks.Task;
 import duke.tasks.Todo;
+import duke.tasks.Fixed;
 
 /**
  * Parser for Storage related operations.
@@ -37,6 +38,8 @@ public class ParserStorageUtil {
                 } catch (DukeDateTimeParseException e) {
                     task = new Event(description, taskParts[3].strip());
                 }
+            } else if ("F".equals(type)) {
+                task = new Fixed(description, Integer.parseInt(taskParts[3].strip()), Integer.parseInt(taskParts[4].strip()));
             } else {
                 task = new Todo(description);
             }
@@ -60,6 +63,8 @@ public class ParserStorageUtil {
             return  "T | " + task.isDone() + " | " + task.getDescription();
         } else if (task instanceof Event) {
             return "E | " + task.isDone() + " | " + task.getDescription() + " | " + ((Event) task).getEvent();
+        } else if (task instanceof Fixed) {
+            return "F | " + task.isDone() + " | " + task.getDescription() + " | " + ((Fixed) task).getFixed();
         }
         throw new DukeException(MessageUtil.CORRUPTED_TASK);
     }
